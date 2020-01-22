@@ -1,0 +1,2 @@
+python prices.py
+pause
