@@ -102,6 +102,9 @@ while True:
             '.+?</tr>'
         row_matchs = re.finditer(table_pattern,response.text,re.S)
         price_list = []
+        openprice_list = []
+        highprice_list = []
+        lowprice_list = []
         price_count = 0
         insert_val = []
         #print(str(response.text))
