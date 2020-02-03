@@ -134,7 +134,7 @@ while True:
         for priceindex in range(inputdays):
             price_max = max(price_list[priceindex],openprice_list[priceindex],highprice_list[priceindex],lowprice_list[priceindex])
             price_min = min(price_list[priceindex],openprice_list[priceindex],highprice_list[priceindex],lowprice_list[priceindex])
-            atrsum += (price_max - price_min) / price_min
+            atrsum += (price_max - price_min) / price_min if price_min > 0 else 0.0
         atr = atrsum / inputdays
         
         insert_val.append((alias_result[0], datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")) + tuple(price_list) + (atr,))
