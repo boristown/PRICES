@@ -137,7 +137,7 @@ while True:
             atrsum += (price_max - price_min) / price_min
         atr = atrsum / inputdays
         
-        insert_val.append((alias_result[0], datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")) + tuple(price_list) + (atr))
+        insert_val.append((alias_result[0], datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")) + tuple(price_list) + (atr,))
 
         #insert_val.reverse()
         insert_sql = "INSERT INTO price ("  \
