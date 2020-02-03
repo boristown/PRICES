@@ -111,8 +111,14 @@ while True:
                 break
             #print(str(cell_matchs.group(0)))
             price = float(str(cell_matchs.group(2)).replace(",",""))
+            openprice = float(str(cell_matchs.group(3)).replace(",",""))
+            highprice = float(str(cell_matchs.group(4)).replace(",",""))
+            lowprice = float(str(cell_matchs.group(5)).replace(",",""))
             #if price_count == 1 or price != price_list[price_count-2]:
             price_list.append(price)
+            openprice_list.append(openprice)
+            highprice_list.append(highprice)
+            lowprice_list.append(lowprice)
             #else:
             #    price_count -= 1
         if len(price_list) != inputdays:
@@ -120,14 +126,21 @@ while True:
             #  print(len(price_list))
             print(datetime.datetime.now(), ": price_list :" ,len(price_list))
             continue
-
-        insert_val.append((alias_result[0], datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")) + tuple(price_list))
+            
+        atrsum = 0.0
+        for priceindex in range(inputdays):
+            price_max = max(price_list[priceindex],openprice_list[priceindex],highprice_list[priceindex],lowprice_list[priceindex])
+            price_min = min(price_list[priceindex],openprice_list[priceindex],highprice_list[priceindex],lowprice_list[priceindex])
+            atrsum += (price_max - price_min) / price_min
+        atr = atrsum / inputdays
+        
+        insert_val.append((alias_result[0], datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")) + tuple(price_list) + (atr))
 
         #insert_val.reverse()
         insert_sql = "INSERT INTO price ("  \
-            "SYMBOL, TIME, " + ",".join(["PRICE" + str(i+1).zfill(3) for i in range(inputdays)]) + ") VALUES (" \
-            "%s, %s," + ",".join(["%s" for i in range(inputdays)]) + ")"  \
-            "ON DUPLICATE KEY UPDATE TIME=VALUES(TIME)," + ",".join(["PRICE" + str(i+1).zfill(3) + "=VALUES(PRICE" + str(i+1).zfill(3) + ")" for i in range(inputdays)])
+            "SYMBOL, TIME, " + ",".join(["PRICE" + str(i+1).zfill(3) for i in range(inputdays)]) + ",ATR) VALUES (" \
+            "%s, %s," + ",".join(["%s" for i in range(inputdays)]) + ",%s)"  \
+            "ON DUPLICATE KEY UPDATE TIME=VALUES(TIME)," + ",".join(["PRICE" + str(i+1).zfill(3) + "=VALUES(PRICE" + str(i+1).zfill(3) + ")" for i in range(inputdays)]) + ", ATR=VALUES(ATR)"
         #print(insert_sql)
         #print(insert_val)
         try:
